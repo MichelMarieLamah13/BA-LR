@@ -2,6 +2,9 @@
 #  Copyright (c) 2022. Imen Ben Amor
 # ==============================================================================
 import warnings
+
+import pandas as pd
+
 warnings.filterwarnings("ignore")
 import gc
 import numpy as np
@@ -28,27 +31,31 @@ def number_utterances(utt):
         loc_list.append(first_element_after_split)
 
     return speaker_dict, loc_list
+
+
 def todelete(xvectors):
     """
     This function deletes zero columns for all rows in array "xvectors"
     :param xvectors: array of binary xvectors
     :return: filtered array, index of deleted column
     """
-    res=np.all(xvectors[..., :] == 0, axis=0)
-    idx=[]
+    res = np.all(xvectors[..., :] == 0, axis=0)
+    idx = []
     for i in range(len(res)):
         if res[i]:
             idx.append(i)
     v = np.delete(xvectors, idx, axis=1)
     return v, idx
 
-def todelete(df,f):
-    todelete=[]
+
+def todelete(df, f):
+    todelete = []
     for c in df[f]:
-        if len(df[df[c]!=0])==0:
+        if len(df[df[c] != 0]) == 0:
             todelete.append(c)
-    df=df.drop(todelete, axis=1)
+    df = df.drop(todelete, axis=1)
     return df
+
 
 def profil_spk(xvectors, utt_per_spk, BA):
     """
@@ -72,6 +79,8 @@ def profil_spk(xvectors, utt_per_spk, BA):
         j += utt_per_spk[spk]
         # print(j)
     return profil
+
+
 def compute_typicality(b, couples, profil):
     """
     This function calculates typicality
@@ -88,6 +97,7 @@ def compute_typicality(b, couples, profil):
     typ_BA = nb / len(couples)
     return typ_BA
 
+
 def compute_dropout(b, profil, utt_spk, matrix_utterances, index_of_b):
     """
 
@@ -101,7 +111,7 @@ def compute_dropout(b, profil, utt_spk, matrix_utterances, index_of_b):
     BA_spk = 0
     nb_BA_spk_b = {}
     spk_has_b_atleast_once = 0
-    dropout_per_spk={}
+    dropout_per_spk = {}
     for spk in utt_spk.keys():
         nb_BA = 0
         nb_present_BA = 0
@@ -115,10 +125,12 @@ def compute_dropout(b, profil, utt_spk, matrix_utterances, index_of_b):
                     nb_present_BA += 1
         nb_BA_spk_b[spk] = nb_present_BA
         BA_spk += nb_BA / len(utt_spk[spk])
-        dropout_per_spk[spk]= nb_BA / len(utt_spk[spk])
+        dropout_per_spk[spk] = nb_BA / len(utt_spk[spk])
 
     out = BA_spk / spk_has_b_atleast_once
-    return out,nb_BA_spk_b,dropout_per_spk,spk_has_b_atleast_once
+    return out, nb_BA_spk_b, dropout_per_spk, spk_has_b_atleast_once
+
+
 def utterance_spk(nb_utt_spk):
     """
     This function provides a dictionary of the utterance for spki
@@ -133,6 +145,7 @@ def utterance_spk(nb_utt_spk):
         j += nb
     return utt_spk
 
+
 def utterance_dictionary(binary_vectors, utterances, BA):
     """
     This function gives the binary vector (using BAs) for each utterance
@@ -146,7 +159,8 @@ def utterance_dictionary(binary_vectors, utterances, BA):
         utt[u] = {b: i for i, b in zip(row, BA)}
     return utt
 
-def typicality_and_dropout(profil, couples,  utt_spk, BA, vectors,typ_path,dout_path):
+
+def typicality_and_dropout(profil, couples, utt_spk, BA, vectors, typ_path, dout_path):
     """
     This function calculate the typicality and Dropout for all BAs
     :param profil: dictionary of speakers profiles
@@ -199,6 +213,7 @@ def stringToList(string):
     listRes = list(string.split(" "))
     return listRes
 
+
 def readVectors(filePath):
     vectors = []
     utt = []
@@ -212,7 +227,7 @@ def readVectors(filePath):
             vec = []
             utt.append(elems[0])
             for elem in stringToList(elems[1][2:-2].rstrip()):
-                value_to_append = 1 if (round(float(elem),4) != 0) else 0
+                value_to_append = 1 if (round(float(elem), 4) != 0) else 0
                 vec.append(value_to_append)
             vectors.append(vec)
             percent = round(line_idx / number_of_lines * 100, 0)
@@ -222,13 +237,28 @@ def readVectors(filePath):
     return utt, np.array(vectors)
 
 
+def stringToListMine(text):
+    value = eval(text)
+    value = [float(x) for x in value]
+    return value
+
+
+def readVectorsMine(filePath):
+    df = pd.read_csv(filePath)
+    for i in range(len(df)):
+        value = df.at[i, 'vector']
+        df.at[i, 'vector'] = stringToListMine(value)
+    df.to_csv(filePath, index=False)
+    return df
+
+
 if __name__ == "__main__":
     # Arguments
     env.logging_config(env.PATH_LOGS + "/logFile")
     parse = argparse.ArgumentParser()
-    parse.add_argument("--path",default="data/xvectors.txt",type=str)
-    parse.add_argument("--typ_path",default="data/typ.txt",type=str)
-    parse.add_argument("--dout_path",default="data/dout.txt",type=str)
+    parse.add_argument("--path", default="data/xvectors.txt", type=str)
+    parse.add_argument("--typ_path", default="data/typ.txt", type=str)
+    parse.add_argument("--dout_path", default="data/dout.txt", type=str)
     args = parse.parse_args()
     logging.info("read xvectors")
     utterances, binary = readVectors(args.path)
@@ -239,7 +269,7 @@ if __name__ == "__main__":
     binary_vectors, idx = todelete(binary)
     logging.info(f"number of deleted columns: {len(idx)}")
     BA = ['BA' + str(i) for i in range(binary.shape[1]) if np.array([i]) not in idx]
-    #liberate memory
+    # liberate memory
     del binary
     del loc_list
     del idx
@@ -251,4 +281,4 @@ if __name__ == "__main__":
     # speakers couples
     logging.info("computing combinations...")
     couples = list(itertools.combinations(utt_per_spk.keys(), 2))
-    typicality_and_dropout(profil, couples,  utt_spk, BA, binary_vectors,args.typ_path,args.dout_path)
+    typicality_and_dropout(profil, couples, utt_spk, BA, binary_vectors, args.typ_path, args.dout_path)
