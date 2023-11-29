@@ -4,7 +4,7 @@
 #
 
 #SBATCH --job-name=exp
-#SBATCH --partition=gpu
+# #SBATCH --partition=gpu
 #SBATCH --time=7-00:00:00
 #SBATCH --output=output.log
 #SBATCH --error=error.log
