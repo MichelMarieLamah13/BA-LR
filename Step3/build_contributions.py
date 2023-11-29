@@ -31,28 +31,30 @@ def contributions(df_0, X_train):
             s += meanshap_val_var[var]
             mean_shap_group[key] = s
     return var_groups, mean_shap_group, meanshap_val_var
-def build_dataframe(var_groups,contribution,contribution_var):
-    list_all_subkeys=[]
-    list_key=[]
-    list_val_key=[]
-    list_subkey=[]
-    new_contribution={}
-    new_contribution_var={}
+
+
+def build_dataframe(var_groups, contribution, contribution_var):
+    list_all_subkeys = []
+    list_key = []
+    list_val_key = []
+    list_subkey = []
+    new_contribution = {}
+    new_contribution_var = {}
     for k in var_groups.keys():
-        list_key.extend([k]*len(var_groups[k]))
-        new_contribution[k]=contribution[k]/sum(contribution.values())
-        list_val_key.extend([new_contribution[k]]*len(var_groups[k]))
+        list_key.extend([k] * len(var_groups[k]))
+        new_contribution[k] = contribution[k] / sum(contribution.values())
+        list_val_key.extend([new_contribution[k]] * len(var_groups[k]))
         list_subkey.extend(var_groups[k])
-        templist=[]
+        templist = []
         for i in var_groups[k]:
-            if contribution[k]!=0:
-                new_contribution_var[i]=contribution_var[i]
+            if contribution[k] != 0:
+                new_contribution_var[i] = contribution_var[i]
             else:
                 new_contribution_var[i] = 0
             templist.append(new_contribution_var[i])
         list_all_subkeys.extend(templist)
-    df_plot=pd.DataFrame(list_key,columns=["Family"])
-    df_plot["Members"]=list_subkey
-    df_plot["Cont_Member"]=list_all_subkeys
-    df_plot["Cont_Family"]=list_val_key
-    return df_plot,new_contribution,new_contribution_var
+    df_plot = pd.DataFrame(list_key, columns=["Family"])
+    df_plot["Members"] = list_subkey
+    df_plot["Cont_Member"] = list_all_subkeys
+    df_plot["Cont_Family"] = list_val_key
+    return df_plot, new_contribution, new_contribution_var

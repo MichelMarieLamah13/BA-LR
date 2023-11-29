@@ -13,14 +13,14 @@ from build_contributions import *
 from plots import *
 from test import *
 
-meta_vox2 = pd.read_csv("/data/vox2_meta.csv")
-meta_vox1 = pd.read_csv("/voxceleb1.csv", sep='\t')
+meta_vox2 = pd.read_csv("data/vox2_meta.csv")
+meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
+floc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("f ")
+mloc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("m ")
 env.logging_config("logs/logFile_contribution_BA")
 
 
 def prepare_data(ba):
-    floc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("f ")
-    mloc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("m ")
     logging.info(f'Number of men in Train={mloc_train}')
     logging.info(f'Number of female in Train={floc_train}')
     ba0 = pd.read_csv(f"data/BA/{ba}_0.csv")
@@ -50,7 +50,7 @@ for ba in BA:
         tree_model = model.best_estimator_
         logging.info(model.best_score_, model.best_params_)
         logging.info("=======Test ba model on voxceleb1======")
-        test_acc = test_vox1(ba, tree_model, features_vox1, df_binary)
+        test_acc = test_vox1(ba, tree_model, features_vox1, df_binary, meta_vox1, mloc_train, floc_train)
         logging.info("=======Building explainer=======")
         X = X.iloc[:, :-1]
         explainer = shap.TreeExplainer(tree_model)

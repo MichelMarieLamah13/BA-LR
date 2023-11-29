@@ -6,3 +6,4 @@ notebook
 shap
 scipy
 scikit-learn
+bokeh

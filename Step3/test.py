@@ -2,19 +2,22 @@
 #  Copyright (c) 2023. Imen Ben Amor
 # ==============================================================================
 
-from Step2.preprocessing import partition_gender_plot,loc_gendre_vox1
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import logging
 from sklearn.metrics import confusion_matrix
 
+from Step3.data_distribution import loc_gendre_vox1, partition_gender_plot
 
-def accuracy(model,X,y):
+
+def accuracy(model, X, y):
     y_pred = model.predict(X)
     TN, FP, FN, TP = confusion_matrix(y, y_pred).ravel()
-    accuracy =  (TP+TN) /(TP+FP+TN+FN)
+    accuracy = (TP + TN) / (TP + FP + TN + FN)
     return accuracy
-def test_vox1(ba, trained_model, features_vox1, df_binary):
+
+
+def test_vox1(ba, trained_model, features_vox1, df_binary, meta_vox1, mloc_train, floc_train):
     ba_1_vox1 = list(df_binary[df_binary[ba] == 1]["name"].values)
     features_0_vox1 = []
     features_1_vox1 = []
@@ -28,8 +31,10 @@ def test_vox1(ba, trained_model, features_vox1, df_binary):
     features_1_vox1 = pd.DataFrame(features_1_vox1)
     nb_m0, nb_f0, utt_man0, utt_female0 = loc_gendre_vox1(features_0_vox1, meta_vox1)
     nb_m1, nb_f1, utt_man1, utt_female1 = loc_gendre_vox1(features_1_vox1, meta_vox1)
-    dict_ba[f"0_vox1"] = {"nb_M": nb_m0, "nb_F": nb_f0, "nb_utt_F": utt_female0, "nb_utt_M": utt_man0,"nb_M_train": mloc_train}
-    dict_ba[f"1_vox1"] = {"nb_M": nb_m1, "nb_F": nb_f1, "nb_utt_F": utt_female1, "nb_utt_M": utt_man1,"nb_F_train": floc_train}
+    dict_ba[f"0_vox1"] = {"nb_M": nb_m0, "nb_F": nb_f0, "nb_utt_F": utt_female0, "nb_utt_M": utt_man0,
+                          "nb_M_train": mloc_train}
+    dict_ba[f"1_vox1"] = {"nb_M": nb_m1, "nb_F": nb_f1, "nb_utt_F": utt_female1, "nb_utt_M": utt_man1,
+                          "nb_F_train": floc_train}
     partition_gender_plot(dict_ba, ba, f"partition_vox1")
     # remove name column
     features_0_vox1 = features_0_vox1.iloc[:, 1:]
