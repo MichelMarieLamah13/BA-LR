@@ -3,21 +3,33 @@
 # ==============================================================================
 import glob
 import os.path
+import sys
 
 import pandas as pd
+from torch.utils.data import Dataset, DataLoader
 
 
-def drop_first_column(path):
-    if os.path.exists(path):
-        df = pd.read_csv(path)
+class DropDataset(Dataset):
+    def __init__(self, path):
+        self.files = glob.glob(path)
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, i):
+        df = pd.read_csv(self.files[i])
         df = df.drop(df.columns[0], axis=1)
         df.to_csv(path, index=False)
+        return df
 
 
 if __name__ == "__main__":
-    BA = [f"BA{i}" for i in range(256)]
-    for ba in BA:
-        for i in range(2):
-            fname = f"{ba}_{i}.csv"
-            path = f"data/BA/{ba}_{i}.csv"
-            drop_first_column(path)
+    path = 'data/BA/*.csv'
+    dataset = DropDataset(path)
+    dataloader = DataLoader(dataset, batch_size=10, num_workers=4)
+    for i, x in enumerate(dataloader):
+        print(f"Batch {i + 1}")
+        sys.stdout.flush()
+        columns = [df.columns for df in x]
+        print(f"{columns}, {len(columns)}")
+        sys.stdout.flush()

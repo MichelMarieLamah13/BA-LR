@@ -7,3 +7,6 @@ shap
 scipy
 scikit-learn
 bokeh
+torch
+torchvision
+torchaudio
