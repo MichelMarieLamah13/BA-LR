@@ -17,10 +17,12 @@ class DropDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, i):
+        todelete = "Unnamed: 0"
         df = pd.read_csv(self.files[i])
-        df = df.drop(df.columns[0], axis=1)
-        df.to_csv(path, index=False)
-        return df
+        if todelete in df.columns:
+            df = df.drop([todelete], axis=1)
+            df.to_csv(path, index=False)
+        return df.columns.tolist()
 
 
 if __name__ == "__main__":
@@ -30,6 +32,5 @@ if __name__ == "__main__":
     for i, x in enumerate(dataloader):
         print(f"Batch {i + 1}")
         sys.stdout.flush()
-        columns = [df.columns for df in x]
-        print(f"{columns}, {len(columns)}")
+        print(f"{x}, {len(x)}")
         sys.stdout.flush()
