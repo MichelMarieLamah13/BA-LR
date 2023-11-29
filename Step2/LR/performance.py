@@ -70,13 +70,13 @@ def cllr(tar_llrs, nontar_llrs):
 def min_cllr(tar_llrs, nontar_llrs, monotonicity_epsilon=1e-6, compute_eer=False):
     if compute_eer:
         [tar, non, eer] = optimal_llr(tar_llrs, nontar_llrs, laplace=True, monotonicity_epsilon=monotonicity_epsilon,
-                                     compute_eer=compute_eer)
+                                      compute_eer=compute_eer)
         cmin = cllr(tar, non)
-        return cmin, eer,tar,non
+        return cmin, eer, tar, non
     else:
-        [tar,non] = optimal_llr(tar_llrs, nontar_llrs, laplace=True, monotonicity_epsilon=monotonicity_epsilon)
+        [tar, non] = optimal_llr(tar_llrs, nontar_llrs, laplace=True, monotonicity_epsilon=monotonicity_epsilon)
         cmin = cllr(tar, non)
-        return cmin,tar,non
+        return cmin, tar, non
 
 
 def pavx(y):
@@ -139,8 +139,8 @@ def pavx(y):
 def optimal_llr(tar, non, laplace=False, monotonicity_epsilon=1e-6, compute_eer=False):
     # flag Laplace: avoids infinite LLR magnitudes;
     # also, this stops DET cureves from 'curling' to the axes on sparse data (DETs stay in more populated regions)
-    scores = numpy.concatenate([tar,non])
-    Pideal = numpy.concatenate([numpy.ones(len(tar)),numpy.zeros(len(non))])
+    scores = numpy.concatenate([tar, non])
+    Pideal = numpy.concatenate([numpy.ones(len(tar)), numpy.zeros(len(non))])
 
     perturb = numpy.argsort(scores, kind='mergesort')
     Pideal = Pideal[perturb]
@@ -178,7 +178,7 @@ def optimal_llr(tar, non, laplace=False, monotonicity_epsilon=1e-6, compute_eer=
     #
     for i in range(nbins):
         pmiss[i] = miss / len(tar)
-        pfa[i] = fa /len(non)
+        pfa[i] = fa / len(non)
         left = int(left + width[i])
         miss = numpy.sum(Pideal[:left])
         fa = len(tar) + len(non) - left - numpy.sum(Pideal[left:])
