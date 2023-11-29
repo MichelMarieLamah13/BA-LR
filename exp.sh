@@ -14,6 +14,8 @@
 source /etc/profile.d/conda.sh
 conda activate ba_lr
 
-cp -r /local_disk/clytie/ibenamor/phd_experiments/data/Explainability/BA/* ./data/
+# cp -r /local_disk/clytie/ibenamor/phd_experiments/data/Explainability/BA/* ./data/
+
+python3 fix_problem.py
 
 conda deactivate

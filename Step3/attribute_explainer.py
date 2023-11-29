@@ -15,8 +15,8 @@ from test import *
 
 meta_vox2 = pd.read_csv("data/vox2_meta.csv")
 meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
-floc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("f ")
-mloc_train = list(meta_vox2[meta_vox2["Set "] == "dev "]["Gender "].values).count("m ")
+floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
+mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 env.logging_config("logs/logFile_contribution_BA")
 
 
