@@ -60,7 +60,7 @@ for ba in BA:
         var_groups, mean_shap_group, meanshap_val_var = contributions(df_0, X)
         df_plot, new_shap_group, new_shap_var = build_dataframe(var_groups, mean_shap_group, meanshap_val_var)
         logging.info(f"==Contribution of each member to the family for {ba}==")
-        plot_family_bars(df_plot)
+        plot_family_bars(df_plot, ba)
         logging.info("Contribution of BAs to each family")
         logging.info(f"==================== End {ba}======================")
         logging.info(f"===================================================")
