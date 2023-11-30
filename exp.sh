@@ -17,7 +17,7 @@ conda activate ba_lr
 
 # cp -r /local_disk/clytie/ibenamor/phd_experiments/data/Explainability/BA/* ./data/
 
-python3 Step3/attribute_explainer.py
-# python3 fix_problem.py
+# python3 Step3/attribute_explainer.py
+python3 fix_problem.py
 
 conda deactivate
