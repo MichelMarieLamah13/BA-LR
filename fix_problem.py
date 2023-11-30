@@ -42,7 +42,7 @@ def remove_space():
     df = pd.read_csv(path)
     columns = [c.strip() for c in df.columns.tolist()]
     df.columns = columns
-    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+    df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
     df.to_csv(path, index=False)
 
 
