@@ -3,20 +3,52 @@
 # ==============================================================================
 import glob
 import os.path
+import sys
 
 import pandas as pd
+from torch.utils.data import Dataset, DataLoader
 
-def drop_first_column(path):
-    if os.path.exists(path):
-        df = pd.read_csv(path)
-        df = df.drop(df.columns[0], axis=1)
-        df.to_csv(path, index=False)
+
+class DropDataset(Dataset):
+    def __init__(self, path):
+        self.files = glob.glob(path)
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, i):
+        todelete = "Unnamed: 0"
+        path = self.files[i]
+        df = pd.read_csv(self.files[i])
+        if todelete in df.columns:
+            df = df.drop([todelete], axis=1)
+            df.to_csv(path, index=False)
+        return df.columns.tolist()
+
+
+def delete_columns():
+    path = 'data/BA/*.csv'
+    dataset = DropDataset(path)
+    dataloader = DataLoader(dataset, batch_size=10, num_workers=4)
+    for i, x in enumerate(dataloader):
+        print(f"Batch {i + 1}")
+        sys.stdout.flush()
+        print(f"{x}, {len(x)}")
+        sys.stdout.flush()
+
+
+def remove_space():
+    path = "data/vox2_meta.csv"
+    df = pd.read_csv(path)
+    columns = [c.strip() for c in df.columns.tolist()]
+    df.columns = columns
+    df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
+    df.to_csv(path, index=False)
 
 
 if __name__ == "__main__":
-    BA = [f"BA{i}" for i in range(256)]
-    for ba in BA:
-        for i in range(2):
-            fname = f"{ba}_{i}.csv"
-            path = f"data/BA/{ba}_{i}.csv"
-            drop_first_column(path)
+    # enlever colonne "Unnamed: 0"
+    # delete_columns()
+
+    # meta_vox2.columns: enlever espace, colonne set enlever espace sur valeur
+    remove_space()

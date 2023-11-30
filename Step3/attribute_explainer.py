@@ -1,18 +1,18 @@
 # ==============================================================================
 #  Copyright (c) 2023. Imen Ben Amor
 # ==============================================================================
+import pdb
 
 import var_env as env
-import pandas as pd
 from sklearn import tree
 from sklearn.model_selection import GridSearchCV
 import shap
 import os
-from sklearn.preprocessing import StandardScaler
 from build_contributions import *
 from plots import *
 from test import *
 
+pdb.set_trace()
 meta_vox2 = pd.read_csv("data/vox2_meta.csv")
 meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
 floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
@@ -25,8 +25,6 @@ def prepare_data(ba):
     logging.info(f'Number of female in Train={floc_train}')
     ba0 = pd.read_csv(f"data/BA/{ba}_0.csv")
     ba1 = pd.read_csv(f"data/BA/{ba}_1.csv")
-    ba0 = ba0.drop(["Unnamed: 0"], axis=1)
-    ba1 = ba1.drop(["Unnamed: 0"], axis=1)
     X = pd.concat([ba0, ba1], ignore_index=True)
     S = StandardScaler()
     X_scaled = pd.DataFrame(S.fit_transform(X.iloc[:, 1:]), columns=X.iloc[:, 1:].columns)
