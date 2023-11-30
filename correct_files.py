@@ -2,6 +2,23 @@
 #  Copyright (c) 2023. Imen Ben Amor
 # ==============================================================================
 import pdb
+import sys
+
+from torch.utils.data import Dataset, DataLoader
+
+
+class CorrectFileDataset(Dataset):
+    def __init__(self, files):
+        self.files = files
+
+    def __len__(self):
+        return len(self.files)
+
+    def __getitem__(self, i):
+        path = self.files[i]
+        lines = correct_files(path)
+        create_new_file(f'{path}.new', lines)
+        return path
 
 
 def correct_files(path):
@@ -26,7 +43,6 @@ def correct_files(path):
                     i += 1
 
             i += 1
-        pdb.set_trace()
         return correct_lines
 
 
@@ -35,12 +51,14 @@ def create_new_file(path, lines):
         for line in lines:
             file.write(f"{line}\n")
 
-    print(f"CREATED: {path} ")
+    print(f"CREATED: {path}")
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":
-    paths = ['tp_jef/vec_vox1.txt', 'tp_jef/vec_vox2.txt']
-    for path in paths:
-        lines = correct_files(path)
-        create_new_file(f'{path}.new', lines)
-
+    paths = ['data/vec_vox1.txt', 'data/vec_vox2.txt']
+    dataset = CorrectFileDataset(paths)
+    loader = DataLoader(dataset, num_workers=2, batch_size=1)
+    for i, x in enumerate(loader, start=1):
+        print(f"Batch [{i}/{len(loader)}]")
+        sys.stdout.flush()
