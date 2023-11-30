@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 import logging
 from sklearn.metrics import confusion_matrix
 
-from Step3.data_distribution import loc_gendre_vox1, partition_gender_plot
+from data_distribution import loc_gendre_vox1, partition_gender_plot
 
 
 def accuracy(model, X, y):
