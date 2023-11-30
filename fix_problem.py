@@ -46,9 +46,42 @@ def remove_space():
     df.to_csv(path, index=False)
 
 
+def create_name(path: str):
+    parts = path.split('.')[0]
+    parts = parts.split('/')[-3:]
+    fname = '-'.join(parts)
+    return fname
+
+
+def correct_vox1_opensmile():
+    path = 'data/vox1_opensmile.csv'
+    df = pd.read_csv(path)
+    todelete = "Unnamed: 0"
+    if todelete in df.columns:
+        df = df.drop([todelete], axis=1)
+
+    df.rename(columns={'name': 'path'}, inplace=True)
+    df['name'] = df['path'].apply(create_name)
+
+    df.to_csv(path)
+
+
+def create_df_binary():
+    path = "data/vec_vox1.txt.new"
+    save_path = "data/df_binary.csv"
+    df = pd.read_csv(path)
+    columns = ['name']
+    columns += [for x in df[]]
+
+
 if __name__ == "__main__":
     # enlever colonne "Unnamed: 0"
     # delete_columns()
 
     # meta_vox2.columns: enlever espace, colonne set enlever espace sur valeur
     remove_space()
+
+    # enlever colonne "Unnamed: 0" dans "data/vox1_opensmile.csv"
+
+    # "data/df_binary.csv" vecteur binaire qu'on a déjà
+    # '/local_disk/arges/jduret/corpus/voxceleb1/dev/wav/id11251/WbB8m9-wlIQ/00002.wav'
