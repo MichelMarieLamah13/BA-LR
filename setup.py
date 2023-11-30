@@ -7,7 +7,7 @@ from setuptools import setup
 setup(
     name='BA-LR',
     version='',
-    packages=['data','extractor','LR','model','cfg'],
+    packages=['data', 'extractor', 'LR', 'model', 'cfg'],
     url='',
     license='/Users/imenba/Desktop/BA-LR/LICENSE',
     author='imenba',
