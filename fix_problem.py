@@ -6,7 +6,6 @@ import os.path
 
 import pandas as pd
 
-
 def drop_first_column(path):
     if os.path.exists(path):
         df = pd.read_csv(path)
