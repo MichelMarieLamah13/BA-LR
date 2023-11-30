@@ -25,7 +25,7 @@ class DropDataset(Dataset):
         return df.columns.tolist()
 
 
-if __name__ == "__main__":
+def delete_columns():
     path = 'data/BA/*.csv'
     dataset = DropDataset(path)
     dataloader = DataLoader(dataset, batch_size=10, num_workers=4)
@@ -34,3 +34,20 @@ if __name__ == "__main__":
         sys.stdout.flush()
         print(f"{x}, {len(x)}")
         sys.stdout.flush()
+
+
+def remove_space():
+    path = "data/vox2_meta.csv"
+    meta_vox2 = pd.read_csv(path)
+    columns = [c.strip() for c in meta_vox2.columns.tolist()]
+    meta_vox2.columns = columns
+    meta_vox2['Set'] = meta_vox2['Set'].apply(lambda x: x.strip())
+    meta_vox2.to_csv(path, index=False)
+
+
+if __name__ == "__main__":
+    # enlever colonne "Unnamed: 0"
+    # delete_columns()
+
+    # meta_vox2.columns: enlever espace, colonne set enlever espace sur valeur
+    remove_space()
