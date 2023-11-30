@@ -18,6 +18,7 @@ class DropDataset(Dataset):
 
     def __getitem__(self, i):
         todelete = "Unnamed: 0"
+        path = self.files[i]
         df = pd.read_csv(self.files[i])
         if todelete in df.columns:
             df = df.drop([todelete], axis=1)
