@@ -2,3 +2,5 @@ tp_jef/
 data/
 BA/
 logs/
+error.log
+output.log
