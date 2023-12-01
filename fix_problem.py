@@ -25,7 +25,6 @@ class DropDataset(Dataset):
         df = pd.read_csv(self.files[i])
         if todelete in df.columns:
             df = df.drop([todelete], axis=1)
-        df['name'] = df['name'].apply(create_name)
         df.to_csv(path, index=False)
         return path
 
