@@ -12,7 +12,6 @@ from build_contributions import *
 from plots import *
 from test import *
 
-pdb.set_trace()
 meta_vox2 = pd.read_csv("data/vox2_meta.csv")
 meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
 floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
