@@ -36,8 +36,8 @@ def prepare_data(ba):
 # =================================================
 
 BA = [f"BA{i}" for i in range(256)]
-features_vox1 = pd.read_csv("data/vox1_opensmile.csv")
-df_binary = pd.read_csv("data/df_binary.csv")
+features_vox1 = pd.read_csv("data/vox1_opensmile.csv.new")
+df_binary = pd.read_csv("data/vec_vox1.txt.new")  # df_binary.csv
 for ba in BA:
     if os.path.isfile(f"data/BA/{ba}_0.csv"):
         logging.info(f"===================={ba}=========================")
