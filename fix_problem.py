@@ -118,7 +118,7 @@ def create_df_binary():
 
     data = []
     for _, row in vox1_df.iterrows():
-        name = row['name']
+        name = row['utterance']
         vector = eval(row['vector'])
         new_row = {'name': name}
         for i, value in enumerate(vector):
