@@ -109,7 +109,6 @@ def launch1():
 
 
 def create_df_binary():
-    pdb.set_trace()
     typ_df = pd.read_csv('data/typ_clean.txt.new')
     correct_df = typ_df[typ_df['value'] > 0.0001]
     columns = correct_df['ba'].values.tolist()
