@@ -9,6 +9,8 @@ import sys
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 
+import multiprocessing
+
 
 class DropDataset(Dataset):
     def __init__(self, path):
@@ -55,16 +57,41 @@ def create_name(path: str):
 
 
 def correct_vox1_opensmile():
+    print("START correct vox1 opensmile")
+    sys.stdout.flush()
     path = 'data/vox1_opensmile.csv'
     df = pd.read_csv(path)
     todelete = "Unnamed: 0"
     if todelete in df.columns:
         df = df.drop([todelete], axis=1)
+    df['name'] = df['name'].apply(create_name)
+    df.to_csv(f'{path}.new')
+    print("END")
+    sys.stdout.flush()
 
-    df.rename(columns={'name': 'path'}, inplace=True)
-    df['name'] = df['path'].apply(create_name)
 
-    df.to_csv(path)
+def correct_dout_dtyp():
+    print("START correct dout dtyp")
+    sys.stdout.flush()
+    paths = ['data/dout_clean.txt', 'data/typ_clean.txt']
+    for path in paths:
+        with open(path) as file:
+            lines = file.readlines()
+            keys = []
+            values = []
+            for line in lines:
+                parts = line.split(':')
+                ba = parts[0].strip()
+                value = parts[1].strip()
+
+                keys.append(ba)
+                values.append(value)
+
+        df = pd.DataFrame({'ba': keys, 'value': values})
+        df.to_csv(f'{path}.new', index=False)
+
+    print("END")
+    sys.stdout.flush()
 
 
 def create_df_binary():
@@ -75,4 +102,16 @@ def create_df_binary():
 
 
 if __name__ == "__main__":
-    create_df_binary()
+    # create_df_binary()
+
+    # Create two separate processes for each function
+    process1 = multiprocessing.Process(target=correct_vox1_opensmile)
+    process2 = multiprocessing.Process(target=correct_dout_dtyp)
+
+    # Start both processes
+    process1.start()
+    process2.start()
+
+    # Wait for both processes to finish
+    process1.join()
+    process2.join()
