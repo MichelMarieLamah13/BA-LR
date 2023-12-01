@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="Black">
     <option name="sdkName" value="ba_lr" />
   </component>
+=======
+>>>>>>> fefd66e6d4e2a7c43e70b950d5491bdbdddc5961
   <component name="ProjectRootManager" version="2" project-jdk-name="ba_lr" project-jdk-type="Python SDK" />
 </project>

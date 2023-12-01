@@ -15,7 +15,10 @@
 source /etc/profile.d/conda.sh
 conda activate ba_lr
 
+
+
 # python3 Step3/attribute_explainer.py
 python3 fix_problem.py
+# python3 correct_files.py
 
 conda deactivate
