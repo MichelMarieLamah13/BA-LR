@@ -25,18 +25,17 @@ class DropDataset(Dataset):
         df = pd.read_csv(self.files[i])
         if todelete in df.columns:
             df = df.drop([todelete], axis=1)
-            df.to_csv(path, index=False)
-        return df.columns.tolist()
+        df['name'] = df['name'].apply(create_name)
+        df.to_csv(path, index=False)
+        return path
 
 
-def delete_columns():
+def correct_ba_files():
     path = 'data/BA/*.csv'
     dataset = DropDataset(path)
-    dataloader = DataLoader(dataset, batch_size=10, num_workers=4)
-    for i, x in enumerate(dataloader):
-        print(f"Batch {i + 1}")
-        sys.stdout.flush()
-        print(f"{x}, {len(x)}")
+    loader = DataLoader(dataset, batch_size=10, num_workers=4)
+    for i, x in enumerate(loader, start=1):
+        print(f"Batch [{i}/{len(loader)}]")
         sys.stdout.flush()
 
 
@@ -132,5 +131,6 @@ def create_df_binary():
 
 
 if __name__ == "__main__":
-    create_df_binary()
+    # create_df_binary()
     # launch1()
+    correct_ba_files()
