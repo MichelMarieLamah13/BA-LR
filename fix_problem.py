@@ -3,6 +3,7 @@
 # ==============================================================================
 import glob
 import os.path
+import pdb
 import sys
 
 import pandas as pd
@@ -67,21 +68,11 @@ def correct_vox1_opensmile():
 
 
 def create_df_binary():
+    pdb.set_trace()
     path = "data/vec_vox1.txt.new"
     save_path = "data/df_binary.csv"
-    df = pd.read_csv(path)
-    columns = ['name']
-    columns += [for x in df[]]
+    pass
 
 
 if __name__ == "__main__":
-    # enlever colonne "Unnamed: 0"
-    # delete_columns()
-
-    # meta_vox2.columns: enlever espace, colonne set enlever espace sur valeur
-    remove_space()
-
-    # enlever colonne "Unnamed: 0" dans "data/vox1_opensmile.csv"
-
-    # "data/df_binary.csv" vecteur binaire qu'on a déjà
-    # '/local_disk/arges/jduret/corpus/voxceleb1/dev/wav/id11251/WbB8m9-wlIQ/00002.wav'
+    create_df_binary()
