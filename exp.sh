@@ -6,7 +6,7 @@
 #SBATCH --job-name=exp
 # #SBATCH --partition=gpu
 #SBATCH --time=7-00:00:00
-#SBATCH --cpus-per-task=4
+# #SBATCH --cpus-per-task=4
 #SBATCH --output=output.log
 #SBATCH --error=error.log
 #SBATCH --mem=32G

@@ -94,16 +94,7 @@ def correct_dout_dtyp():
     sys.stdout.flush()
 
 
-def create_df_binary():
-    pdb.set_trace()
-    path = "data/vec_vox1.txt.new"
-    save_path = "data/df_binary.csv"
-    pass
-
-
-if __name__ == "__main__":
-    # create_df_binary()
-
+def launch1():
     # Create two separate processes for each function
     process1 = multiprocessing.Process(target=correct_vox1_opensmile)
     process2 = multiprocessing.Process(target=correct_dout_dtyp)
@@ -115,3 +106,15 @@ if __name__ == "__main__":
     # Wait for both processes to finish
     process1.join()
     process2.join()
+
+
+def create_df_binary():
+    pdb.set_trace()
+    path = "data/vec_vox1.txt.new"
+    save_path = "data/df_binary.csv"
+    pass
+
+
+if __name__ == "__main__":
+    create_df_binary()
+    # launch1()
