@@ -65,7 +65,7 @@ def correct_vox1_opensmile():
     if todelete in df.columns:
         df = df.drop([todelete], axis=1)
     df['name'] = df['name'].apply(create_name)
-    df.to_csv(f'{path}.new')
+    df.to_csv(f'{path}.new', index=False)
     print("END")
     sys.stdout.flush()
 
@@ -110,9 +110,26 @@ def launch1():
 
 def create_df_binary():
     pdb.set_trace()
+    typ_df = pd.read_csv('data/typ_clean.txt.new')
+    correct_df = typ_df[typ_df['value'] > 0.0001]
+    columns = correct_df['ba'].values.tolist()
+
     path = "data/vec_vox1.txt.new"
-    save_path = "data/df_binary.csv"
-    pass
+    vox1_df = pd.read_csv(path)
+
+    data = []
+    for _, row in vox1_df.iterrows():
+        name = row['name']
+        vector = eval(row['vector'])
+        new_row = {'name': name}
+        for i, value in enumerate(vector):
+            key = columns[i]
+            new_row[key] = int(value)
+
+        data.append(new_row)
+
+    df = pd.DataFrame(data)
+    df.to_csv(path, index=False)
 
 
 if __name__ == "__main__":
