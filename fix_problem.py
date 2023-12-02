@@ -48,6 +48,7 @@ def remove_space():
 
 
 def correct_vox1_opensmile():
+    pdb.set_trace()
     print("START correct vox1 opensmile")
     sys.stdout.flush()
     path = 'data/vox1_opensmile.csv'
@@ -61,7 +62,6 @@ def correct_vox1_opensmile():
 
 
 def create_name_vec_vox1(name, files):
-    pdb.set_trace()
     parts = name.split('-')
     begin = parts[0]
     end = f'{parts[-1]}.wav'
