@@ -13,7 +13,7 @@ from sklearn.model_selection import GridSearchCV
 import shap
 import os
 
-from Step3.attribute_explainer import prepare_data
+from attribute_explainer import prepare_data
 from build_contributions import *
 from plots import *
 from test import *
