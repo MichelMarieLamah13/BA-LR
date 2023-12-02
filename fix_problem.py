@@ -60,14 +60,11 @@ def correct_vox1_opensmile():
     sys.stdout.flush()
 
 
-def create_name_vec_vox1(name: str):
+def create_name_vec_vox1(name, files):
     parts = name.split('-')
     begin = parts[0]
     end = f'{parts[-1]}.wav'
     between = '-'.join(parts[1:-1])
-    dev_files = glob.glob('/local_disk/arges/jduret/corpus/voxceleb1/dev/wav/*/*/*.wav')
-    test_files = glob.glob('/local_disk/arges/jduret/corpus/voxceleb1/test/wav/*/*/*.wav')
-    files = dev_files + test_files
     fname = ''
     fname1 = '/'.join([begin, between, end])
     for item in files:
@@ -78,8 +75,11 @@ def create_name_vec_vox1(name: str):
 
 
 def correct_vec_vox1_2(path):
+    dev_files = glob.glob('/local_disk/arges/jduret/corpus/voxceleb1/dev/wav/*/*/*.wav')
+    test_files = glob.glob('/local_disk/arges/jduret/corpus/voxceleb1/test/wav/*/*/*.wav')
+    files = dev_files + test_files
     df = pd.read_csv(path)
-    df['name'] = df['name'].apply(create_name_vec_vox1)
+    df['name'] = df['name'].apply(lambda x: create_name_vec_vox1(x, files))
     df.to_csv(path, index=False)
 
 
@@ -148,8 +148,7 @@ if __name__ == "__main__":
     # correct_vec_vox1_1()
     # launch1()
     # correct_ba_files()
-    # correct_vox1_opensmile()
+    correct_vox1_opensmile()
     # /local_disk/arges/jduret/corpus/voxceleb2/wav/id00052/0UYCxWDKf-8/00001.wav'
     # correct_vec_vox1_2('data/vec_vox1.txt.new')
-    correct_vec_vox1_2('data/vox1_opensmile.csv.new')
     # 381 elements
