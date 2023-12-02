@@ -57,7 +57,7 @@ def lime_tabular_explainer():
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
             parameters = {'max_depth': range(3, 15)}
             model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
-            model.fit(X=X_train, y=y_train)
+            model.fit(X=X_train.values, y=y_train)
             tree_model = model.best_estimator_
             logging.info(model.best_score_, model.best_params_)
             logging.info("=======Test ba model on voxceleb1======")
@@ -71,7 +71,8 @@ def lime_tabular_explainer():
                 mode='regression'
             )
             for idx, row in X_test.iterrows():
-                explanation = explainer.explain_instance(row, model.predict_proba,
+                row = X_test.iloc[idx]
+                explanation = explainer.explain_instance(row.values, model.predict_proba,
                                                          num_features=len(input_features))
                 save_explanation(explanation, ba, idx)
 
