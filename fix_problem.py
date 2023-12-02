@@ -48,7 +48,6 @@ def remove_space():
 
 
 def correct_vox1_opensmile():
-    pdb.set_trace()
     print("START correct vox1 opensmile")
     sys.stdout.flush()
     path = 'data/vox1_opensmile.csv'
