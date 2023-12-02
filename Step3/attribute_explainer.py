@@ -12,8 +12,10 @@ from build_contributions import *
 from plots import *
 from test import *
 
+env.logging_config("logs/logFile_contribution_BA")
 
-def prepare_data(ba):
+
+def prepare_data(ba, mloc_train, floc_train):
     logging.info(f'Number of men in Train={mloc_train}')
     logging.info(f'Number of female in Train={floc_train}')
     ba0 = pd.read_csv(f"data/BA/{ba}_0.csv")
@@ -28,13 +30,18 @@ def prepare_data(ba):
 
 # =================================================
 def shap_tree_explainer():
+    meta_vox2 = pd.read_csv("data/vox2_meta.csv")
+    meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
+    floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
+    mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
+
     BA = [f"BA{i}" for i in range(256)]
     features_vox1 = pd.read_csv("data/vox1_opensmile.csv.new")
     df_binary = pd.read_csv("data/vec_vox1.txt.new")  # df_binary.csv
     for ba in BA:
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             logging.info(f"===================={ba}=========================")
-            X, y, ba0, ba1 = prepare_data(ba)
+            X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
             parameters = {'max_depth': range(3, 15)}
             model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
             model.fit(X=X.iloc[:, :-1], y=y)
@@ -59,10 +66,4 @@ def shap_tree_explainer():
 
 
 if __name__ == '__main__':
-    meta_vox2 = pd.read_csv("data/vox2_meta.csv")
-    meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
-    floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
-    mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
-    env.logging_config("logs/logFile_contribution_BA")
-
     shap_tree_explainer()
