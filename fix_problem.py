@@ -77,8 +77,7 @@ def create_name_vec_vox1(name: str):
     return fname
 
 
-def correct_vec_vox1_2():
-    path = 'data/vec_vox1.txt.new'
+def correct_vec_vox1_2(path):
     df = pd.read_csv(path)
     df['name'] = df['name'].apply(create_name_vec_vox1)
     df.to_csv(path, index=False)
@@ -151,5 +150,6 @@ if __name__ == "__main__":
     # correct_ba_files()
     # correct_vox1_opensmile()
     # /local_disk/arges/jduret/corpus/voxceleb2/wav/id00052/0UYCxWDKf-8/00001.wav'
-    correct_vec_vox1_2()
+    # correct_vec_vox1_2('data/vec_vox1.txt.new')
+    correct_vec_vox1_2('data/vox1_opensmile.csv.new')
     # 381 elements
