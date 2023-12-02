@@ -71,7 +71,6 @@ def lime_tabular_explainer():
                 mode='regression'
             )
             for idx, row in X_test.iterrows():
-                row = X_test.iloc[idx]
                 explanation = explainer.explain_instance(row.values, model.predict_proba,
                                                          num_features=len(input_features))
                 save_explanation(explanation, ba, idx)
