@@ -61,6 +61,7 @@ def correct_vox1_opensmile():
 
 
 def create_name_vec_vox1(name, files):
+    pdb.set_trace()
     parts = name.split('-')
     begin = parts[0]
     end = f'{parts[-1]}.wav'
