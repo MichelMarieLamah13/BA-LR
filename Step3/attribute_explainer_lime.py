@@ -26,6 +26,7 @@ env.logging_config("logs/logFile_contribution_BA")
 
 def save_explanation(explanation, ba, idx):
     path = f'Step3/explainability_results/lime/{ba}/{idx}'
+    os.makedirs(path, exist_ok=True)
     with open(f'{path}/explanation.pkl', 'wb') as file:
         pickle.dump(explanation, file)
 
