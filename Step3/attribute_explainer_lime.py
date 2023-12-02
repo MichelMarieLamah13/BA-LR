@@ -24,14 +24,14 @@ from sklearn.model_selection import train_test_split
 env.logging_config("logs/logFile_contribution_BA")
 
 
-def save_explanation(explanation, ba):
-    path = f'Step3/explainability_results/lime/{ba}'
+def save_explanation(explanation, ba, idx):
+    path = f'Step3/explainability_results/lime/{ba}/{idx}'
     with open(f'{path}/explanation.pkl', 'wb') as file:
         pickle.dump(explanation, file)
 
 
-def load_explanation(ba):
-    path = f'Step3/explainability_results/lime/{ba}'
+def load_explanation(ba, idx):
+    path = f'Step3/explainability_results/lime/{ba}/{idx}'
     with open(f'{path}/explanation.pkl', 'rb') as file:
         explanation = pickle.load(file)
         return explanation
@@ -50,10 +50,10 @@ def lime_tabular_explainer():
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             logging.info(f"===================={ba}=========================")
             X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
-            input_features = X.columns[:-1]
+            input_features = X.columns[:-1].to_list()
             target_feature = ['ba']
             X = X[input_features]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
             parameters = {'max_depth': range(3, 15)}
             model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
             model.fit(X=X_train, y=y_train)
@@ -69,8 +69,10 @@ def lime_tabular_explainer():
                 verbose=True,
                 mode='regression'
             )
-            explanation = explainer.explain_instance(X.iloc[0], model.predict_proba,
-                                                     num_features=len(X.iloc[:, :-1].columns))
+            for idx, row in X_test.iterrows():
+                explanation = explainer.explain_instance(row, model.predict_proba,
+                                                         num_features=len(input_features))
+                save_explanation(explanation, ba, idx)
 
 
 if __name__ == "__main__":
