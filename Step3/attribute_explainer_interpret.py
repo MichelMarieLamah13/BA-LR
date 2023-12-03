@@ -30,9 +30,9 @@ from interpret.perf import RegressionPerf
 env.logging_config("logs/logFile_contribution_BA")
 
 
-def save_data(data, path):
+def save_data(data, path, filename):
     os.makedirs(path, exist_ok=True)
-    with open(path, 'wb') as file:
+    with open(f'{path}/{filename}.pkl', 'wb') as file:
         pickle.dump(data, file)
 
 
@@ -68,8 +68,8 @@ class InterpretDataset(Dataset):
                 sys.stdout.flush()
 
                 marginal = Marginal().explain_data(X_train, y_train, name='Train Data')
-                path = f'Step3/explainability_results/interpret/{ba}/marginal.pkl'
-                save_data(marginal, path)
+                path = f'Step3/explainability_results/interpret/{ba}'
+                save_data(marginal, path, 'marginal')
 
                 print("END Explore Data")
                 sys.stdout.flush()
@@ -94,16 +94,13 @@ class InterpretDataset(Dataset):
                 sys.stdout.flush()
 
                 ct_perf = RegressionPerf(ct.predict).explain_perf(X_test, y_test, name='Classification Tree')
-                path = f'Step3/explainability_results/interpret/{ba}/ct_perf.pkl'
-                save_data(ct_perf, path)
+                save_data(ct_perf, path, 'ct_perf')
 
                 dlc_perf = RegressionPerf(dlc.predict).explain_perf(X_test, y_test, name='Decision List Classifier')
-                path = f'Step3/explainability_results/interpret/{ba}/dlc_perf.pkl'
-                save_data(dlc_perf, path)
+                save_data(dlc_perf, path, 'dlc_perf')
 
                 ebm_perf = RegressionPerf(ebm.predict).explain_perf(X_test, y_test, name='EBM')
-                path = f'Step3/explainability_results/interpret/{ba}/ebm_perf.pkl'
-                save_data(ebm_perf, path)
+                save_data(ebm_perf, path, 'ebm_perf')
 
                 print("END Performance")
                 sys.stdout.flush()
@@ -113,8 +110,7 @@ class InterpretDataset(Dataset):
                 sys.stdout.flush()
 
                 ebm_global = ebm.explain_global(name='EBM')
-                path = f'Step3/explainability_results/interpret/{ba}/ebm_global.pkl'
-                save_data(ebm_global, path)
+                save_data(ebm_global, path, 'ebm_global')
 
                 print("END Global interpretability")
                 sys.stdout.flush()
@@ -124,8 +120,7 @@ class InterpretDataset(Dataset):
                 sys.stdout.flush()
 
                 ebm_local = ebm.explain_local(X_test[:5], y_test[:5], name='EBM')
-                path = f'Step3/explainability_results/interpret/{ba}/ebm_local.pkl'
-                save_data(ebm_local, path)
+                save_data(ebm_local, path, 'ebm_local')
 
                 print("BEGIN Local interpretability")
                 sys.stdout.flush()
