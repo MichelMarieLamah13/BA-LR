@@ -65,7 +65,7 @@ def lime_tabular_explainer():
             test_acc = test_vox1(ba, tree_model, features_vox1, df_binary, meta_vox1, mloc_train, floc_train)
             logging.info("=======Building explainer=======")
             explainer = lime_tabular.LimeTabularExplainer(
-                X_train,
+                X_train.values,
                 feature_names=input_features,
                 class_names=target_feature,
                 verbose=True,
