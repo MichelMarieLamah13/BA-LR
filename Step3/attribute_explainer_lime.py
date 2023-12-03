@@ -3,6 +3,7 @@
 # ==============================================================================
 import pdb
 import pickle
+import sys
 
 import numpy as np
 import pandas as pd
@@ -57,21 +58,23 @@ def lime_tabular_explainer():
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
             parameters = {'max_depth': range(3, 15)}
             model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
-            model.fit(X=X_train.values, y=y_train)
+            model.fit(X=X_train, y=y_train)
             tree_model = model.best_estimator_
             logging.info(model.best_score_, model.best_params_)
             logging.info("=======Test ba model on voxceleb1======")
             test_acc = test_vox1(ba, tree_model, features_vox1, df_binary, meta_vox1, mloc_train, floc_train)
             logging.info("=======Building explainer=======")
             explainer = lime_tabular.LimeTabularExplainer(
-                X_train.values,
+                X_train,
                 feature_names=input_features,
                 class_names=target_feature,
                 verbose=True,
                 mode='regression'
             )
             for idx, row in X_test.iterrows():
-                explanation = explainer.explain_instance(row.values, model.predict_proba,
+                print(f"{ba} - {idx}")
+                sys.stdout.flush()
+                explanation = explainer.explain_instance(row, model.predict_proba,
                                                          num_features=len(input_features))
                 save_explanation(explanation, ba, idx)
 
