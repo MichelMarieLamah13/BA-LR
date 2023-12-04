@@ -10,7 +10,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --output=output_shap.log
 #SBATCH --error=error_shap.log
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 
 
 source /etc/profile.d/conda.sh
