@@ -87,13 +87,14 @@ def use_interpret():
                 print(f"BEGIN Performance: {ba}")
                 sys.stdout.flush()
 
-                ct_perf = RegressionPerf(ct.predict).explain_perf(X_test, y_test, name='Classification Tree')
+                ct_perf = RegressionPerf(ct.predict_proba).explain_perf(X_test, y_test, name='Classification Tree')
                 save_data(ct_perf, path, 'ct_perf')
 
-                dlc_perf = RegressionPerf(dlc.predict).explain_perf(X_test, y_test, name='Decision List Classifier')
+                dlc_perf = RegressionPerf(dlc.predict_proba).explain_perf(X_test, y_test,
+                                                                          name='Decision List Classifier')
                 save_data(dlc_perf, path, 'dlc_perf')
 
-                ebm_perf = RegressionPerf(ebm.predict).explain_perf(X_test, y_test, name='EBM')
+                ebm_perf = RegressionPerf(ebm.predict_proba).explain_perf(X_test, y_test, name='EBM')
                 save_data(ebm_perf, path, 'ebm_perf')
 
                 print(f"END Performance: {ba}")

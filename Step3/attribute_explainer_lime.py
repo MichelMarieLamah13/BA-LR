@@ -61,7 +61,7 @@ def lime_tabular_explainer():
                 tol=0.01,
                 random_state=0
             )
-            model.fit(X=X_train.values, y=y_train)
+            model.fit(X=X_train, y=y_train)
             logging.info("=======Building explainer=======")
             explainer = lime_tabular.LimeTabularExplainer(
                 X_train.values,
@@ -70,10 +70,7 @@ def lime_tabular_explainer():
                 verbose=True,
                 mode='classification'
             )
-            indexes = X_test.index.to_list()
-            for i in range(len(indexes)):
-                idx = indexes[i]
-                row = X_test.iloc[i]
+            for idx, row in X_test:
                 print(f"{ba} - {idx}")
                 sys.stdout.flush()
                 explanation = explainer.explain_instance(row, model.predict_proba,
