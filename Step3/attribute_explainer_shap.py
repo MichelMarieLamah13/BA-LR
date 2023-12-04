@@ -96,8 +96,9 @@ def use_shap():
 
                 # RandomForestClassifier
                 model = RandomForestClassifier(
-                    max_depth=6,
+                    max_depth=2,
                     random_state=0,
+                    n_jobs=4,
                     n_estimators=10
                 )
                 process(X_train, y_train, X_test, ba, model, model.predict, 'random_forest')
