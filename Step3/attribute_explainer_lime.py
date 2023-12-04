@@ -70,7 +70,7 @@ def lime_tabular_explainer():
                 verbose=True,
                 mode='classification'
             )
-            for idx, row in X_test:
+            for idx, row in X_test.iterrows():
                 print(f"{ba} - {idx}")
                 sys.stdout.flush()
                 explanation = explainer.explain_instance(row, model.predict_proba,
