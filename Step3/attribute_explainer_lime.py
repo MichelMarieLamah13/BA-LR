@@ -54,7 +54,7 @@ def lime_tabular_explainer():
             X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
             input_features = X.columns[:-1].to_list()
             target_feature = ['ba']
-            X = X.iloc[:, :-1]
+            X = X[input_features]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
             parameters = {'max_depth': range(3, 15)}
             model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
@@ -71,7 +71,8 @@ def lime_tabular_explainer():
                 verbose=True,
                 mode='regression'
             )
-            for idx, row in X_test.iterrows():
+            df_test = pd.DataFrame(X_test)
+            for idx, row in df_test.iterrows():
                 print(f"{ba} - {idx}")
                 sys.stdout.flush()
                 explanation = explainer.explain_instance(row, model.predict_proba,
