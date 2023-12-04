@@ -55,7 +55,7 @@ def use_interpret():
                 X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
                 input_features = X.columns[:-1].to_list()
                 X = X[input_features]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.02, random_state=0)
 
                 # Exploring Data
                 print(f"BEGIN Explore Data: {ba}")
@@ -87,14 +87,14 @@ def use_interpret():
                 print(f"BEGIN Performance: {ba}")
                 sys.stdout.flush()
 
-                ct_perf = ROC(ct.predict).explain_perf(X_test, y_test, name='Classification Tree')
+                ct_perf = ROC(ct.predict_proba).explain_perf(X_test, y_test, name='Classification Tree')
                 save_data(ct_perf, path, 'ct_perf')
 
-                dlc_perf = ROC(dlc.predict).explain_perf(X_test, y_test,
-                                                         name='Decision List Classifier')
+                dlc_perf = ROC(dlc.predict_proba).explain_perf(X_test, y_test,
+                                                               name='Decision List Classifier')
                 save_data(dlc_perf, path, 'dlc_perf')
 
-                ebm_perf = ROC(ebm.predict).explain_perf(X_test, y_test, name='EBM')
+                ebm_perf = ROC(ebm.predict_proba).explain_perf(X_test, y_test, name='EBM')
                 save_data(ebm_perf, path, 'ebm_perf')
 
                 print(f"END Performance: {ba}")
