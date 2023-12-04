@@ -7,6 +7,10 @@ import sys
 
 import numpy as np
 import pandas as pd
+from h2o import H2OFrame
+from h2o.estimators.random_forest import H2ORandomForestEstimator
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier
+from sklearn.svm import SVC
 from torch.utils.data import Dataset, DataLoader
 
 import var_env as env
@@ -42,6 +46,39 @@ def load_data(path):
         return data
 
 
+def process(X_train, y_train, X_test, ba, model, predict_fn, folder):
+    print(f"BEGIN {folder}: {ba}")
+    sys.stdout.flush()
+
+    model.fit(X_train, y_train)
+    path = f'Step3/explainability_results/shap/{ba}/{folder}'
+    save_data(model, path, 'model')
+
+    explainer = shap.KernelExplainer(predict_fn, X_test)
+    save_data(explainer, path, 'explainer')
+
+    rf_shap_values = explainer.shap_values(X_test)
+    save_data(rf_shap_values, path, 'shap_values')
+
+    print(f"END {folder}: {ba}")
+    sys.stdout.flush()
+
+
+class H2OProbWrapper:
+    def __init__(self, model, feature_names):
+        self.predictions = None
+        self.dataframe = None
+        self.model = model
+        self.feature_names = feature_names
+
+    def predict(self, X):
+        if isinstance(X, pd.Series):
+            X = X.values.reshape(1, -1)
+        self.dataframe = pd.DataFrame(X, columns=self.feature_names)
+        self.predictions = self.model.predict(H2OFrame(self.dataframe)).as_data_frame().values
+        return self.predictions.astype('float64')[:, -1]
+
+
 def use_shap():
     meta_vox2 = pd.read_csv("data/vox2_meta.csv")
     floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
@@ -57,67 +94,38 @@ def use_shap():
                 X = X[input_features]
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-                # Exploring Data
-                print(f"BEGIN Explore Data: {ba}")
-                sys.stdout.flush()
+                # RandomForestRegressor
+                model = RandomForestRegressor(
+                    max_depth=6,
+                    random_state=0,
+                    n_estimators=10
+                )
+                process(X_train, y_train, X_test, ba, model, model.predict, 'random_forest')
 
-                marginal = Marginal().explain_data(X_train, y_train, name='Train Data')
-                path = f'Step3/explainability_results/interpret/{ba}'
-                save_data(marginal, path, 'marginal')
+                # GBM
+                model = GradientBoostingClassifier(
+                    n_estimators=500,
+                    validation_fraction=0.2,
+                    n_iter_no_change=5,
+                    tol=0.01,
+                    random_state=0
+                )
+                process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
 
-                print(f"END Explore Data: {ba}")
-                sys.stdout.flush()
+                # SVM
+                model = SVC(
+                    gamma='scale',
+                    decision_function_shape='ovo'
+                )
+                process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
 
-                print(f"BEGIN Training: {ba}")
-                sys.stdout.flush()
-
-                ct = ClassificationTree(random_state=0)
-                ct.fit(X_train, y_train)
-
-                dlc = DecisionListClassifier(random_state=0)
-                dlc.fit(X_train, y_train)
-
-                ebm = ExplainableBoostingClassifier(random_state=0)
-                ebm.fit(X_train, y_train)
-
-                print(f"END Training: {ba}")
-                sys.stdout.flush()
-
-                # Performance
-                print(f"BEGIN Performance: {ba}")
-                sys.stdout.flush()
-
-                ct_perf = RegressionPerf(ct.predict).explain_perf(X_test, y_test, name='Classification Tree')
-                save_data(ct_perf, path, 'ct_perf')
-
-                dlc_perf = RegressionPerf(dlc.predict).explain_perf(X_test, y_test, name='Decision List Classifier')
-                save_data(dlc_perf, path, 'dlc_perf')
-
-                ebm_perf = RegressionPerf(ebm.predict).explain_perf(X_test, y_test, name='EBM')
-                save_data(ebm_perf, path, 'ebm_perf')
-
-                print(f"END Performance: {ba}")
-                sys.stdout.flush()
-
-                # Global Interpretability
-                print(f"BEGIN Global interpretability: {ba}")
-                sys.stdout.flush()
-
-                ebm_global = ebm.explain_global(name='EBM')
-                save_data(ebm_global, path, 'ebm_global')
-
-                print(f"END Global interpretability: {ba}")
-                sys.stdout.flush()
-
-                # Local Interpretability
-                print(f"BEGIN Local interpretability: {ba}")
-                sys.stdout.flush()
-
-                ebm_local = ebm.explain_local(X_test[:5], y_test[:5], name='EBM')
-                save_data(ebm_local, path, 'ebm_local')
-
-                print(f"BEGIN Local interpretability: {ba}")
-                sys.stdout.flush()
+                # H2O
+                model = H2ORandomForestEstimator(ntrees=200, max_depth=20, nfolds=10)
+                X_train_h20 = H2OFrame(X_train)
+                y_train_h20 = H2OFrame(y_train)
+                X_test_h20 = H2OFrame(X_test)
+                model_wrapper = H2OProbWrapper(model, input_features)
+                process(X_train_h20, y_train_h20, X_test_h20, ba, model, model_wrapper.predict, 'h2O')
 
 
 if __name__ == "__main__":
