@@ -42,7 +42,7 @@ def load_data(path):
         return data
 
 
-def use_interpret():
+def use_shap():
     meta_vox2 = pd.read_csv("data/vox2_meta.csv")
     floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
     mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
@@ -121,4 +121,4 @@ def use_interpret():
 
 
 if __name__ == "__main__":
-    use_interpret()
+    use_shap()
