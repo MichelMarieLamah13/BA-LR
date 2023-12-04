@@ -7,6 +7,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import GradientBoostingClassifier
 
 import var_env as env
 from sklearn import tree
@@ -41,13 +42,10 @@ def load_explanation(ba, idx):
 
 def lime_tabular_explainer():
     meta_vox2 = pd.read_csv("data/vox2_meta.csv")
-    meta_vox1 = pd.read_csv("data/voxceleb1.csv", sep='\t')
     floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
     mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 
     BA = [f"BA{i}" for i in range(256)]
-    features_vox1 = pd.read_csv("data/vox1_opensmile.csv.new")
-    df_binary = pd.read_csv("data/vec_vox1.txt.new")  # df_binary.csv
     for ba in BA:
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             logging.info(f"===================={ba}=========================")
@@ -55,21 +53,22 @@ def lime_tabular_explainer():
             input_features = X.columns[:-1].to_list()
             target_feature = ['ba']
             X = X[input_features]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
-            parameters = {'max_depth': range(3, 15)}
-            model = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=2, random_state=0)
+            model = GradientBoostingClassifier(
+                n_estimators=500,
+                validation_fraction=0.2,
+                n_iter_no_change=5,
+                tol=0.01,
+                random_state=0
+            )
             model.fit(X=X_train.values, y=y_train)
-            tree_model = model.best_estimator_
-            logging.info(model.best_score_, model.best_params_)
-            logging.info("=======Test ba model on voxceleb1======")
-            test_acc = test_vox1(ba, tree_model, features_vox1, df_binary, meta_vox1, mloc_train, floc_train)
             logging.info("=======Building explainer=======")
             explainer = lime_tabular.LimeTabularExplainer(
                 X_train.values,
                 feature_names=input_features,
                 class_names=target_feature,
                 verbose=True,
-                mode='regression'
+                mode='classification'
             )
             indexes = X_test.index.to_list()
             for i in range(len(indexes)):
@@ -78,7 +77,7 @@ def lime_tabular_explainer():
                 print(f"{ba} - {idx}")
                 sys.stdout.flush()
                 explanation = explainer.explain_instance(row, model.predict_proba,
-                                                         num_features=len(input_features))
+                                                         num_features=10)
                 save_explanation(explanation, ba, idx)
 
 
