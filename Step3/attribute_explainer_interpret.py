@@ -42,25 +42,19 @@ def load_data(path):
         return data
 
 
-class InterpretDataset(Dataset):
-    def __init__(self):
-        self.meta_vox2 = pd.read_csv("data/vox2_meta.csv")
-        self.floc_train = self.meta_vox2[self.meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
-        self.mloc_train = self.meta_vox2[self.meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
+def use_interpret():
+    meta_vox2 = pd.read_csv("data/vox2_meta.csv")
+    floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
+    mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 
-        self.BA = [f"BA{i}" for i in range(256)]
-
-    def __len__(self):
-        return len(self.BA)
-
-    def __getitem__(self, idx):
-        ba = self.BA[idx]
+    BA = [f"BA{i}" for i in range(256)]
+    for ba in BA:
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             if os.path.isfile(f"data/BA/{ba}_0.csv"):
                 logging.info(f"===================={ba}=========================")
-                X, y, ba0, ba1 = prepare_data(ba, self.mloc_train, self.floc_train)
+                X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
                 input_features = X.columns[:-1].to_list()
-                X = X[input_features]
+                X = X.iloc[:, :-1]
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
                 # Exploring Data
@@ -124,15 +118,6 @@ class InterpretDataset(Dataset):
 
                 print("BEGIN Local interpretability")
                 sys.stdout.flush()
-        return ba
-
-
-def use_interpret():
-    dataset = InterpretDataset()
-    loader = DataLoader(dataset, num_workers=4, batch_size=10)
-    for idx, data in enumerate(loader):
-        print(f"Batch [{idx:2d}/{len(loader)}]")
-        sys.stdout.flush()
 
 
 if __name__ == "__main__":
