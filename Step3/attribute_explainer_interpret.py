@@ -91,7 +91,7 @@ def use_interpret():
                 save_data(ct_perf, path, 'ct_perf')
 
                 dlc_perf = ROC(dlc.predict).explain_perf(X_test, y_test,
-                                                                          name='Decision List Classifier')
+                                                         name='Decision List Classifier')
                 save_data(dlc_perf, path, 'dlc_perf')
 
                 ebm_perf = ROC(ebm.predict).explain_perf(X_test, y_test, name='EBM')

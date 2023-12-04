@@ -92,7 +92,7 @@ def use_shap():
                 X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
                 input_features = X.columns[:-1].to_list()
                 X = X[input_features]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.02, random_state=0)
 
                 # RandomForestClassifier
                 model = RandomForestClassifier(
