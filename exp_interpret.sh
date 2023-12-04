@@ -4,8 +4,8 @@
 #
 
 #SBATCH --job-name=exp
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
+# #SBATCH --partition=gpu
+# #SBATCH --gres=gpu:1
 #SBATCH --time=7-00:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=output_interpret.log
