@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from h2o import H2OFrame
 from h2o.estimators.random_forest import H2ORandomForestEstimator
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier, RandomForestClassifier
 from sklearn.svm import SVC
 from torch.utils.data import Dataset, DataLoader
 
@@ -94,8 +94,8 @@ def use_shap():
                 X = X[input_features]
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-                # RandomForestRegressor
-                model = RandomForestRegressor(
+                # RandomForestClassifier
+                model = RandomForestClassifier(
                     max_depth=6,
                     random_state=0,
                     n_estimators=10
