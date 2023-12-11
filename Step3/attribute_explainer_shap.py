@@ -105,7 +105,7 @@ def use_shap():
 
                 # GBM
                 model = GradientBoostingClassifier(
-                    n_estimators=500,
+                    n_estimators=50,
                     validation_fraction=0.2,
                     n_iter_no_change=5,
                     tol=0.01,
@@ -118,10 +118,10 @@ def use_shap():
                     gamma='scale',
                     decision_function_shape='ovo'
                 )
-                process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
+                process(X_train, y_train, X_test, ba, model, model.predict, 'svm')
 
                 # H2O
-                model = H2ORandomForestEstimator(ntrees=200, max_depth=20, nfolds=10)
+                model = H2ORandomForestEstimator(ntrees=4, max_depth=2, nfolds=3)
                 X_train_h20 = H2OFrame(X_train)
                 y_train_h20 = H2OFrame(y_train)
                 X_test_h20 = H2OFrame(X_test)

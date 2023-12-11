@@ -117,7 +117,7 @@ def use_interpret():
                 ebm_local = ebm.explain_local(X_test[:5], y_test[:5], name='EBM')
                 save_data(ebm_local, path, 'ebm_local')
 
-                print(f"BEGIN Local interpretability: {ba}")
+                print(f"END Local interpretability: {ba}")
                 sys.stdout.flush()
 
 
