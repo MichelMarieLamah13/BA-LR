@@ -11,8 +11,6 @@ import scipy.stats as stats
 from sklearn.preprocessing import StandardScaler
 import logging
 
-env.logging_config(env.PATH_LOGS + "/logFile_SLDA_BA")
-
 
 def lda_forward(X, y, slentry=0.05):
     if not isinstance(X, pd.DataFrame):

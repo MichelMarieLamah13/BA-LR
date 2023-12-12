@@ -27,8 +27,6 @@ from interpret.data import Marginal
 from interpret.glassbox import ExplainableBoostingClassifier, ClassificationTree, DecisionListClassifier
 from interpret.perf import RegressionPerf, ROC
 
-env.logging_config("logs/logFile_contribution_BA")
-
 
 def save_data(data, path, filename):
     os.makedirs(path, exist_ok=True)
@@ -47,7 +45,7 @@ def use_interpret():
     floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
     mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 
-    BA = [f"BA{i}" for i in range(256)]
+    BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
     for ba in BA:
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             if os.path.isfile(f"data/BA/{ba}_0.csv"):

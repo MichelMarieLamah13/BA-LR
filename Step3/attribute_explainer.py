@@ -12,8 +12,6 @@ from build_contributions import *
 from plots import *
 from test import *
 
-env.logging_config("logs/logFile_contribution_BA")
-
 
 def prepare_data(ba, mloc_train, floc_train):
     logging.info(f'Number of men in Train={mloc_train}')

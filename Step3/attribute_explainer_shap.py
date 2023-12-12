@@ -13,7 +13,6 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingClassifier, 
 from sklearn.svm import SVC
 from torch.utils.data import Dataset, DataLoader
 
-import var_env as env
 from sklearn import tree
 from sklearn.model_selection import GridSearchCV
 import shap
@@ -30,8 +29,6 @@ from interpret import show
 from interpret.data import Marginal
 from interpret.glassbox import ExplainableBoostingClassifier, ClassificationTree, DecisionListClassifier
 from interpret.perf import RegressionPerf
-
-env.logging_config("logs/logFile_contribution_BA")
 
 
 def save_data(data, path, filename):
@@ -64,27 +61,13 @@ def process(X_train, y_train, X_test, ba, model, predict_fn, folder):
     sys.stdout.flush()
 
 
-class H2OProbWrapper:
-    def __init__(self, model, feature_names):
-        self.predictions = None
-        self.dataframe = None
-        self.model = model
-        self.feature_names = feature_names
-
-    def predict(self, X):
-        if isinstance(X, pd.Series):
-            X = X.values.reshape(1, -1)
-        self.dataframe = pd.DataFrame(X, columns=self.feature_names)
-        self.predictions = self.model.predict(H2OFrame(self.dataframe)).as_data_frame().values
-        return self.predictions.astype('float64')[:, -1]
-
-
 def use_shap():
     meta_vox2 = pd.read_csv("data/vox2_meta.csv")
     floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
     mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 
-    BA = [f"BA{i}" for i in range(256)]
+    # BA = [f"BA{i}" for i in range(256)]
+    BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
     for ba in BA:
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             if os.path.isfile(f"data/BA/{ba}_0.csv"):
@@ -104,29 +87,16 @@ def use_shap():
                 process(X_train, y_train, X_test, ba, model, model.predict, 'random_forest')
 
                 # GBM
-                model = GradientBoostingClassifier(
-                    n_estimators=50,
-                    validation_fraction=0.2,
-                    n_iter_no_change=5,
-                    tol=0.01,
-                    random_state=0
-                )
+                model = GradientBoostingClassifier(n_estimators=10, random_state=0)
                 process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
 
                 # SVM
                 model = SVC(
                     gamma='scale',
-                    decision_function_shape='ovo'
+                    decision_function_shape='ovo',
+                    random_state=0
                 )
                 process(X_train, y_train, X_test, ba, model, model.predict, 'svm')
-
-                # H2O
-                model = H2ORandomForestEstimator(ntrees=4, max_depth=2, nfolds=3)
-                X_train_h20 = H2OFrame(X_train)
-                y_train_h20 = H2OFrame(y_train)
-                X_test_h20 = H2OFrame(X_test)
-                model_wrapper = H2OProbWrapper(model, input_features)
-                process(X_train_h20, y_train_h20, X_test_h20, ba, model, model_wrapper.predict, 'h2O')
 
 
 if __name__ == "__main__":

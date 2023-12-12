@@ -5,11 +5,9 @@
 import pickle
 import pandas as pd
 import logging
-import var_env as env
 import argparse
 if __name__ == "__main__":
     # Arguments
-    env.logging_config(env.PATH_LOGS + "/logFile_BAparams")
     parse = argparse.ArgumentParser()
     parse.add_argument("--path_params",default="data/open_smile_params.csv",type=str)
     parse.add_argument("--path_utt_list", default="data/BA_uttlist_0_1.pickle", type=str)

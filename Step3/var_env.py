@@ -20,4 +20,3 @@ def logging_config(log_file_path):
     )
 
 # Example usage:
-# env.logging_config("logs/logFile_contribution_BA")
