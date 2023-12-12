@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
+from tqdm import tqdm
 
 import var_env as env
 from sklearn import tree
@@ -46,7 +47,7 @@ def use_interpret():
     mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
 
     BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
-    for ba in BA:
+    for ba in tqdm(BA):
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             if os.path.isfile(f"data/BA/{ba}_0.csv"):
                 logging.info(f"===================={ba}=========================")

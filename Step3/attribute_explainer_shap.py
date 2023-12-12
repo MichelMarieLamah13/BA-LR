@@ -18,6 +18,8 @@ from sklearn.model_selection import GridSearchCV
 import shap
 import os
 
+from tqdm import tqdm
+
 from attribute_explainer import prepare_data
 from build_contributions import *
 from plots import *
@@ -68,10 +70,9 @@ def use_shap():
 
     # BA = [f"BA{i}" for i in range(256)]
     BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
-    for ba in BA:
+    for ba in tqdm(BA):
         if os.path.isfile(f"data/BA/{ba}_0.csv"):
             if os.path.isfile(f"data/BA/{ba}_0.csv"):
-                logging.info(f"===================={ba}=========================")
                 X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
                 input_features = X.columns[:-1].to_list()
                 X = X[input_features]
@@ -89,14 +90,6 @@ def use_shap():
                 # GBM
                 model = GradientBoostingClassifier(n_estimators=10, random_state=0)
                 process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
-
-                # SVM
-                model = SVC(
-                    gamma='scale',
-                    decision_function_shape='ovo',
-                    random_state=0
-                )
-                process(X_train, y_train, X_test, ba, model, model.predict, 'svm')
 
 
 if __name__ == "__main__":
