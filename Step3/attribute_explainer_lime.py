@@ -62,7 +62,7 @@ def lime_tabular_explainer():
             sys.stdout.flush()
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
             save_explained_data(ba, X_test.copy(), y_test)
-            model = GradientBoostingClassifier(n_estimators=50)
+            model = GradientBoostingClassifier()
             model.fit(X=X_train, y=y_train)
             explainer = lime_tabular.LimeTabularExplainer(
                 X_train.values,
