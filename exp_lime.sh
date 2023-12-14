@@ -10,7 +10,7 @@
 # #SBATCH --cpus-per-task=4
 #SBATCH --output=output_lime.log
 #SBATCH --error=error_lime.log
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 
 
 source /etc/profile.d/conda.sh

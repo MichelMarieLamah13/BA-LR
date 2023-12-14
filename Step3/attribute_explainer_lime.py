@@ -61,7 +61,6 @@ def lime_tabular_explainer():
             print(f"BEGIN training model: {ba}")
             sys.stdout.flush()
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
-            save_explained_data(ba, X_test.copy(), y_test)
             model = GradientBoostingClassifier()
             model.fit(X=X_train, y=y_train)
             explainer = lime_tabular.LimeTabularExplainer(
@@ -71,6 +70,8 @@ def lime_tabular_explainer():
                 verbose=True,
                 mode='classification'
             )
+            y_predict = model.predict(X_test)
+            save_explained_data(ba, X_test.copy(), y_test, y_predict)
             print(f"END training model: {ba}")
             sys.stdout.flush()
 
@@ -86,8 +87,9 @@ def lime_tabular_explainer():
             sys.stdout.flush()
 
 
-def save_explained_data(ba, X_test, y_test):
-    X_test['y'] = y_test
+def save_explained_data(ba, X_test, y_test, y_pred):
+    X_test['y_true'] = y_test
+    X_test['y_pred'] = y_pred
     X_test.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
 
 
