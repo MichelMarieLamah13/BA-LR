@@ -54,13 +54,13 @@ def lime_tabular_explainer():
             sys.stdout.flush()
             X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
             input_features = X.columns[1:].to_list()
-            X = X[input_features]
+            X_ = X[input_features]
             print(f"END preparing data: {ba}")
             sys.stdout.flush()
 
             print(f"BEGIN training model: {ba}")
             sys.stdout.flush()
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
+            X_train, X_test, y_train, y_test = train_test_split(X_, y, test_size=10, random_state=0)
             model = GradientBoostingClassifier()
             model.fit(X=X_train, y=y_train)
             explainer = lime_tabular.LimeTabularExplainer(
@@ -71,7 +71,7 @@ def lime_tabular_explainer():
                 mode='classification'
             )
             y_predict = model.predict(X_test)
-            save_explained_data(ba, X_test.copy(), y_test, y_predict)
+            save_explained_data(ba, X, y, y_predict)
             print(f"END training model: {ba}")
             sys.stdout.flush()
 
@@ -87,29 +87,12 @@ def lime_tabular_explainer():
             sys.stdout.flush()
 
 
-def save_explained_data(ba, X_test, y_test, y_pred):
+def save_explained_data(ba, X, y, y_pred):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=10, random_state=0)
     X_test['y_true'] = y_test
     X_test['y_pred'] = y_pred
     X_test.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
 
 
-def add_name_to_data():
-    meta_vox2 = pd.read_csv("data/vox2_meta.csv")
-    floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
-    mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
-    BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
-    for ba in tqdm(BA):
-        X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
-        df = pd.read_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv', index_col=0)
-        indexes = list(df.index.values)
-        values = X.loc[indexes, 'name']
-        if 'name' not in df.columns:
-            df.insert(0, 'name', values)
-        else:
-            df['name'] = values
-        df.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
-
-
 if __name__ == "__main__":
-    # lime_tabular_explainer()
-    add_name_to_data()
+    lime_tabular_explainer()
