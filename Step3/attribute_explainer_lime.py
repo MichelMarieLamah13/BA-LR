@@ -93,5 +93,19 @@ def save_explained_data(ba, X_test, y_test, y_pred):
     X_test.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
 
 
+def add_name_to_data():
+    meta_vox2 = pd.read_csv("data/vox2_meta.csv")
+    floc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("f")
+    mloc_train = meta_vox2[meta_vox2["Set"] == "dev"]["Gender"].to_list().count("m")
+    BA = ['BA2', 'BA3', 'BA4', 'BA5', 'BA8', 'BA9', 'BA10']
+    for ba in tqdm(BA):
+        X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
+        df = pd.read_csv(f'Step3/explainability_results/shap/{ba}/explain_data.csv', index_col=0)
+        indexes = list(df.index.values)
+        values = X.loc[indexes, 'name']
+        df.insert(0, 'name', values)
+        df.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
+
+
 if __name__ == "__main__":
     lime_tabular_explainer()
