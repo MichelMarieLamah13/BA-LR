@@ -78,18 +78,18 @@ def use_shap():
                 X = X[input_features]
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=100, random_state=0)
 
-                # RandomForestClassifier
-                model = RandomForestClassifier(
-                    max_depth=2,
-                    random_state=0,
-                    n_jobs=4,
-                    n_estimators=10
-                )
-                process(X_train, y_train, X_test, ba, model, model.predict, 'random_forest')
-
                 # GBM
-                model = GradientBoostingClassifier(n_estimators=10, random_state=0)
+                model = GradientBoostingClassifier()
                 process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
+
+                y_pred = model.predict(X_test)
+                save_explained_data(ba, X_test, y_test, y_pred)
+
+
+def save_explained_data(ba, X_test, y_test, y_pred):
+    X_test['y_true'] = y_test
+    X_test['y_pred'] = y_pred
+    X_test.to_csv(f'Step3/explainability_results/shap/{ba}/explain_data.csv')
 
 
 if __name__ == "__main__":
