@@ -103,7 +103,10 @@ def add_name_to_data():
         df = pd.read_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv', index_col=0)
         indexes = list(df.index.values)
         values = X.loc[indexes, 'name']
-        df.insert(0, 'name', values)
+        if 'name' not in df.columns:
+            df.insert(0, 'name', values)
+        else:
+            df['name'] = values
         df.to_csv(f'Step3/explainability_results/lime/{ba}/explain_data.csv')
 
 
