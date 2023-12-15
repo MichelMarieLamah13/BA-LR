@@ -108,4 +108,5 @@ def add_name_to_data():
 
 
 if __name__ == "__main__":
-    lime_tabular_explainer()
+    # lime_tabular_explainer()
+    add_name_to_data()
