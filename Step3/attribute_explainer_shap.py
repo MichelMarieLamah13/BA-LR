@@ -45,21 +45,24 @@ def load_data(path):
         return data
 
 
-def process(X_train, y_train, X_test, ba, model, predict_fn, folder):
-    print(f"BEGIN {folder}: {ba}")
+def process(X_train, y_train, X_test, ba, model, predict_fn):
+    print(f"BEGIN : {ba}")
     sys.stdout.flush()
 
     model.fit(X_train, y_train)
-    path = f'Step3/explainability_results/shap/{ba}/{folder}'
+    path = f'Step3/explainability_results/shap/{ba}'
     save_data(model, path, 'model')
 
     explainer = shap.KernelExplainer(predict_fn, X_test)
     save_data(explainer, path, 'explainer')
 
+    exp_shap_values = explainer(X_test)
+    save_data(exp_shap_values, path, 'exp_shap_values')
+
     rf_shap_values = explainer.shap_values(X_test)
     save_data(rf_shap_values, path, 'shap_values')
 
-    print(f"END {folder}: {ba}")
+    print(f"END: {ba}")
     sys.stdout.flush()
 
 
@@ -75,24 +78,24 @@ def use_shap():
             if os.path.isfile(f"data/BA/{ba}_0.csv"):
                 X, y, ba0, ba1 = prepare_data(ba, mloc_train, floc_train)
                 input_features = X.columns[:-1].to_list()
-                X = X[input_features]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=100, random_state=0)
 
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=100, random_state=0)
+                X_test_ = X_test.copy()
+
+                X_test = X_test[input_features]
+                X_train = X_train[input_features]
                 # GBM
                 model = GradientBoostingClassifier()
-                process(X_train, y_train, X_test, ba, model, model.predict, 'gradient_boosting')
+                process(X_train, y_train, X_test, ba, model, model.predict)
 
                 y_pred = model.predict(X_test)
-                save_explained_data(ba, X_test, y_test, y_pred)
+                save_explained_data(ba, X_test_, y_test, y_pred)
 
 
 def save_explained_data(ba, X_test, y_test, y_pred):
     X_test['y_true'] = y_test
     X_test['y_pred'] = y_pred
     X_test.to_csv(f'Step3/explainability_results/shap/{ba}/explain_data.csv')
-
-
-
 
 
 if __name__ == "__main__":
